@@ -36,16 +36,20 @@ function logLetterView(moodLabel: string, letter: Letter | null) {
 }
 
 // Set (in LetterBuilder.tsx) the moment Noah unlocks the hidden 🌸 panel
-// with the passphrase in this browser tab — the site has no real login,
-// so this is the closest signal we've got to "this is Noah testing, not
-// Chlo actually visiting." If you want to test the mood picker WITHOUT
-// triggering the notify-and-delete below, unlock the hidden panel first
+// with the passphrase, on THIS DEVICE — the site has no real login, so
+// this is the closest signal we've got to "this is Noah's own phone/
+// laptop, not Chlo actually visiting." Stored in localStorage (not
+// sessionStorage) so it sticks around across visits/tabs/browser
+// restarts — you only need to unlock the panel once per device, not
+// once per session, for testing to stay out of Chlo's activity log.
+// If you want to test the mood picker WITHOUT triggering the notify,
+// delete, and history-logging below, unlock the hidden panel first
 // (even without doing anything else in it), then go try the moods.
-const NOAH_TESTING_KEY = "noah-testing-session";
+const NOAH_DEVICE_KEY = "noah-device";
 
-function isNoahTestingSession(): boolean {
+function isNoahDevice(): boolean {
   try {
-    return sessionStorage.getItem(NOAH_TESTING_KEY) === "1";
+    return localStorage.getItem(NOAH_DEVICE_KEY) === "1";
   } catch {
     return false;
   }
@@ -53,12 +57,12 @@ function isNoahTestingSession(): boolean {
 
 // Tells Noah's phone to replace this letter, and deletes it from the live
 // site's source on GitHub — so it can't be shown again until he writes a
-// new one. Only fires for real visits, never while Noah's testing (see
-// isNoahTestingSession above), and only when a letter actually existed to
+// new one. Only fires for real visits, never on Noah's own device (see
+// isNoahDevice above), and only when a letter actually existed to
 // consume — the "still being written" placeholder isn't a letter to burn.
 function consumeLetter(moodLabel: string, letter: Letter | null) {
   if (!letter) return;
-  if (isNoahTestingSession()) return;
+  if (isNoahDevice()) return;
   fetch("/api/consume-letter", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -84,9 +88,12 @@ export default function Home() {
   const isSupportMood = selectedMoodInfo?.isSupport ?? false;
 
   // Pings Noah once per visit when Chlo opens the site — not tied to any
-  // specific mood, just lets him know she's using it.
+  // specific mood, just lets him know she's using it. Skipped entirely on
+  // Noah's own device (see isNoahDevice above) so his own testing doesn't
+  // page him or pollute the activity log.
   useEffect(() => {
     if (!NOTIFY_ON_SITE_OPEN) return;
+    if (isNoahDevice()) return;
     try {
       if (sessionStorage.getItem("chlo-open-notified")) return;
       sessionStorage.setItem("chlo-open-notified", "1");
@@ -117,7 +124,7 @@ export default function Home() {
       );
     }
 
-    logLetterView(moodInfo?.label ?? moodKey, pick);
+    if (!isNoahDevice()) logLetterView(moodInfo?.label ?? moodKey, pick);
     consumeLetter(moodInfo?.label ?? moodKey, pick);
   }
 
@@ -125,7 +132,7 @@ export default function Home() {
     const pick = pickRandom(moodLetters, currentLetterId);
     setCurrentLetterId(pick?.id ?? null);
     setVerse((v) => getRandomVerse(v.text));
-    logLetterView(moodLabel, pick);
+    if (!isNoahDevice()) logLetterView(moodLabel, pick);
     consumeLetter(moodLabel, pick);
   }
 

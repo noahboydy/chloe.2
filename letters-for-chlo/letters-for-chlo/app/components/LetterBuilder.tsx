@@ -25,6 +25,50 @@ function escapeForTemplateLiteral(raw: string): string {
     .replace(/\$\{/g, "\\${");
 }
 
+type LetterViewSummary = {
+  key: string;
+  label: string;
+  count: number;
+  missing: boolean;
+};
+
+// Reads the "Read: <id> (<mood>)" / "No letter yet: <mood>" entries that
+// page.tsx logs every time Chlo's shown a letter, and tallies them up —
+// so it's obvious which letters keep coming up (worth adding more variety
+// for) and which moods still have nothing written for them at all.
+// Only covers what's still in ntfy's short-term log, same limit as the
+// raw activity feed below.
+function summarizeLetterViews(
+  entries: NotificationLogEntry[]
+): LetterViewSummary[] {
+  const counts = new Map<string, LetterViewSummary>();
+  for (const entry of entries) {
+    const read = entry.message.match(/^Read: (.+?) \((.+)\)$/);
+    const missing = entry.message.match(/^No letter yet: (.+)$/);
+    if (read) {
+      const [, id, mood] = read;
+      const existing = counts.get(id);
+      counts.set(id, {
+        key: id,
+        label: `${mood} — ${id}`,
+        count: (existing?.count ?? 0) + 1,
+        missing: false,
+      });
+    } else if (missing) {
+      const mood = missing[1];
+      const key = `missing:${mood}`;
+      const existing = counts.get(key);
+      counts.set(key, {
+        key,
+        label: `${mood} (no letter written yet)`,
+        count: (existing?.count ?? 0) + 1,
+        missing: true,
+      });
+    }
+  }
+  return Array.from(counts.values()).sort((a, b) => b.count - a.count);
+}
+
 export function LetterBuilder() {
   const [open, setOpen] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
@@ -48,6 +92,8 @@ export function LetterBuilder() {
   const [pushError, setPushError] = useState("");
   const [pushLoading, setPushLoading] = useState(false);
   const [subCopied, setSubCopied] = useState(false);
+
+  const letterSummary = log ? summarizeLetterViews(log) : [];
 
   function refreshPushStatus() {
     setPushStatus(getPushSupportStatus());
@@ -292,6 +338,38 @@ export function LetterBuilder() {
                   )}
                 </div>
 
+                {!logLoading && !logError && letterSummary.length > 0 && (
+                  <div className="rounded-2xl bg-pink-50 px-4 py-4 mb-5">
+                    <p className="font-medium text-pink-800 text-sm mb-2">
+                      Letters Chlo's seen recently
+                    </p>
+                    <ul className="space-y-1.5">
+                      {letterSummary.map((item) => (
+                        <li
+                          key={item.key}
+                          className="flex items-center justify-between gap-3 text-sm"
+                        >
+                          <span
+                            className={
+                              item.missing ? "text-pink-400" : "text-pink-800"
+                            }
+                          >
+                            {item.label}
+                          </span>
+                          <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-pink-500">
+                            ×{item.count}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="text-xs text-pink-400 mt-2">
+                      High numbers = she's seeing that one a lot, might be
+                      worth adding another. "No letter written yet" means
+                      exactly that for that mood.
+                    </p>
+                  </div>
+                )}
+
                 <p className="text-xs text-pink-500 mb-4">
                   Recent activity below is a short-term history log (not
                   the notifications themselves) — it won't go back very
@@ -426,3 +504,4 @@ export function LetterBuilder() {
     </div>
   );
 }
+

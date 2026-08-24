@@ -35,6 +35,37 @@ function logLetterView(moodLabel: string, letter: Letter | null) {
   );
 }
 
+// Set (in LetterBuilder.tsx) the moment Noah unlocks the hidden 🌸 panel
+// with the passphrase in this browser tab — the site has no real login,
+// so this is the closest signal we've got to "this is Noah testing, not
+// Chlo actually visiting." If you want to test the mood picker WITHOUT
+// triggering the notify-and-delete below, unlock the hidden panel first
+// (even without doing anything else in it), then go try the moods.
+const NOAH_TESTING_KEY = "noah-testing-session";
+
+function isNoahTestingSession(): boolean {
+  try {
+    return sessionStorage.getItem(NOAH_TESTING_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+// Tells Noah's phone to replace this letter, and deletes it from the live
+// site's source on GitHub — so it can't be shown again until he writes a
+// new one. Only fires for real visits, never while Noah's testing (see
+// isNoahTestingSession above), and only when a letter actually existed to
+// consume — the "still being written" placeholder isn't a letter to burn.
+function consumeLetter(moodLabel: string, letter: Letter | null) {
+  if (!letter) return;
+  if (isNoahTestingSession()) return;
+  fetch("/api/consume-letter", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ letterId: letter.id, moodLabel }),
+  }).catch(() => {});
+}
+
 export default function Home() {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [currentLetterId, setCurrentLetterId] = useState<string | null>(null);
@@ -87,6 +118,7 @@ export default function Home() {
     }
 
     logLetterView(moodInfo?.label ?? moodKey, pick);
+    consumeLetter(moodInfo?.label ?? moodKey, pick);
   }
 
   function handleAnother() {
@@ -94,6 +126,7 @@ export default function Home() {
     setCurrentLetterId(pick?.id ?? null);
     setVerse((v) => getRandomVerse(v.text));
     logLetterView(moodLabel, pick);
+    consumeLetter(moodLabel, pick);
   }
 
   function handleBack() {
@@ -145,3 +178,4 @@ export default function Home() {
     </main>
   );
 }
+

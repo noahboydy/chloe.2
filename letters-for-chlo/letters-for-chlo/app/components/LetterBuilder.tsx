@@ -11,19 +11,15 @@ import {
   subscribeToPush,
   type PushSetupStatus,
 } from "../lib/push-client";
+import { escapeForTemplateLiteral } from "../lib/letter-source";
 
 // Change this to whatever you want — it's just a soft "keep Chlo out of my
 // writing tool" gate, not real security. Anyone who opens devtools and reads
 // the page source could find it, so never reuse this passphrase anywhere
-// that actually matters.
+// that actually matters. If you change this, also update the matching
+// constant in app/api/add-letter/route.ts — that one checks it too, since
+// publishing now has a real effect (a commit to your repo).
 const PASSPHRASE = "flowers4chlo";
-
-function escapeForTemplateLiteral(raw: string): string {
-  return raw
-    .replace(/\\/g, "\\\\")
-    .replace(/`/g, "\\`")
-    .replace(/\$\{/g, "\\${");
-}
 
 type LetterViewSummary = {
   key: string;
@@ -82,6 +78,10 @@ export function LetterBuilder() {
   const [signOff, setSignOff] = useState("");
   const [generated, setGenerated] = useState("");
   const [copied, setCopied] = useState(false);
+
+  const [publishLoading, setPublishLoading] = useState(false);
+  const [publishError, setPublishError] = useState("");
+  const [publishSuccess, setPublishSuccess] = useState(false);
 
   const [log, setLog] = useState<NotificationLogEntry[] | null>(null);
   const [logLoading, setLogLoading] = useState(false);
@@ -169,6 +169,53 @@ export function LetterBuilder() {
   },`;
     setGenerated(code);
     setCopied(false);
+  }
+
+  // Publishes straight to the live site via /api/add-letter — commits the
+  // new letter into letters.ts on GitHub directly, no copy/pasting code
+  // needed. Falls back to the old "generate code to paste in yourself"
+  // flow if that's not set up yet or something goes wrong, so there's
+  // always a way to actually add the letter.
+  async function handlePublish() {
+    setPublishError("");
+    setPublishSuccess(false);
+    setPublishLoading(true);
+    try {
+      const res = await fetch("/api/add-letter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          passphrase: passInput,
+          moodKey,
+          text: text.trim(),
+          signOff: signOff.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setPublishSuccess(true);
+        setText("");
+        setSignOff("");
+        setGenerated("");
+      } else if (data.reason === "not-configured") {
+        setPublishError(
+          "GitHub publishing isn't set up yet — here's the code to paste in yourself instead:"
+        );
+        handleGenerate();
+      } else {
+        setPublishError(
+          `Couldn't publish automatically (${data.reason}) — here's the code to paste in yourself instead:`
+        );
+        handleGenerate();
+      }
+    } catch {
+      setPublishError(
+        "Couldn't reach the site to publish — here's the code to paste in yourself instead:"
+      );
+      handleGenerate();
+    } finally {
+      setPublishLoading(false);
+    }
   }
 
   async function handleCopy() {
@@ -473,11 +520,30 @@ export function LetterBuilder() {
 
             <button
               type="button"
-              onClick={handleGenerate}
-              disabled={!text.trim()}
+              onClick={handlePublish}
+              disabled={!text.trim() || publishLoading}
               className="w-full rounded-full bg-pink-500 text-white px-5 py-2 text-sm font-medium hover:bg-pink-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
-              Generate code
+              {publishLoading ? "Publishing..." : "Publish to the site"}
+            </button>
+
+            {publishSuccess && (
+              <p className="text-green-600 text-sm text-center mt-3">
+                Published! Should be live on the site in about a minute. ✓
+              </p>
+            )}
+
+            {publishError && (
+              <p className="text-red-500 text-xs mt-3">{publishError}</p>
+            )}
+
+            <button
+              type="button"
+              onClick={handleGenerate}
+              disabled={!text.trim()}
+              className="w-full mt-2 rounded-full bg-white border-2 border-pink-300 text-pink-600 px-5 py-2 text-xs font-medium hover:bg-pink-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Or generate code to paste in yourself
             </button>
 
             {generated && (
@@ -488,7 +554,9 @@ export function LetterBuilder() {
                   array in <code className="bg-pink-50 px-1 rounded">
                     app/data/letters.ts
                   </code>{" "}
-                  on GitHub, then commit to main. Vercel redeploys
+                  on GitHub — right before the closing{" "}
+                  <code className="bg-pink-50 px-1 rounded">];</code>, not
+                  after it — then commit to main. Vercel redeploys
                   automatically — check the live site in about a minute.
                 </p>
                 <textarea

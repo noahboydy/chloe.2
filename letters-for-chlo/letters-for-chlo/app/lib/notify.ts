@@ -81,9 +81,7 @@ export type NotificationLogEntry = {
 // stored by this browser, it's asking ntfy's server what it's seen
 // recently on this topic. Only used for the in-website history view,
 // unrelated to whether real phone push notifications are working.
-export async function fetchRecentNotifications(): Promise
-  NotificationLogEntry[]
-> {
+export async function fetchRecentNotifications(): Promise<NotificationLogEntry[]> {
   const res = await fetch(`https://ntfy.sh/${NTFY_TOPIC}/json?poll=1&since=all`);
   if (!res.ok) throw new Error(`ntfy returned ${res.status}`);
   const text = await res.text();

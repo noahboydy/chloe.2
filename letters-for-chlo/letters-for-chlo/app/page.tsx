@@ -69,7 +69,7 @@ export default function Home() {
     const moodInfo = moods.find((m) => m.key === moodKey);
     if (NOTIFY_ON_HURTING_MOOD && moodInfo?.isSupport) {
       notifyNoah(
-        "Chlo just opened the 'thinking about hurting myself' page.",
+        `Chlo just picked "${moodInfo.label}".`,
         { title: "Chlo needs you 💙", urgent: true }
       );
     }

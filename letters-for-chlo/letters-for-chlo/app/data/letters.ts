@@ -61,6 +61,11 @@ export const moods: Mood[] = [
 // ─────────────────────────────────────────────────────────────────────────
 
 export const letters: Letter[] = [
+    {
+    id: "missing-1787594629053",
+    moodKey: "missing",
+    text: `hey so i’m here in spirit ooooh spooky but i really want you to know that im still here. I know sometimes you can feel really lonely, and I’m sorry if you’re feeling like that right now. i’m obvs not always the best at knowing what to say, and I’ll probably make things awkward somehow coz i’m a superhero like that but I genuinely care about you and I don’t ever want you to feel like you have nobody. You can talk to me about literally anything, anytime (except for now which isn’t great mb), whether it’s something serious, something stupid, or you just want someone to listen. Even if I’m not there at this exact moment, that doesn’t mean I’ve stopped caring. You matter to me, and you’re not a burden for needing someone. Just get through tonight, and whenever I’m around again, I’m going to be doing my best to make you a happy bunny. whoever it is specifically your missing, maybe i cant make up for their absence - like zach - but they wouldnt want you being upset over them so maybe text them if you can or if you cant or dont want to then im hfy and so is the big Jesus`,
+  },
   {
     id: "sad-1787592126927",
     moodKey: "sad",

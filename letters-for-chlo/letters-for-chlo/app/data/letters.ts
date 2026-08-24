@@ -24,20 +24,15 @@ export type Letter = {
 export const DEFAULT_SIGN_OFF = "Love, Noah";
 
 export const moods: Mood[] = [
-  { key: "sad", label: "Sad", emoji: "😢" },
-  { key: "anxious", label: "Anxious", emoji: "😥" },
-  { key: "lonely", label: "Lonely", emoji: "🫂" },
-  { key: "stressed", label: "Stressed / overwhelmed", emoji: "😮‍💨" },
-  { key: "angry", label: "Angry / frustrated", emoji: "😤" },
-  { key: "down", label: "Down on myself", emoji: "💭" },
-  { key: "missing", label: "Missing someone", emoji: "🌷" },
-  { key: "smile", label: "Just need a smile", emoji: "🌼" },
+  { key: "sad", label: "I'm sad", emoji: "😢" },
   {
     key: "hurting",
-    label: "Thinking about hurting myself",
+    label: "I'm thinking about hurting myself",
     emoji: "💙",
     isSupport: true,
   },
+  { key: "missing", label: "I miss someone", emoji: "🌷" },
+  { key: "smile", label: "I just need a smile", emoji: "🌼" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────

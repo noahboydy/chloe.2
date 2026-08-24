@@ -30,6 +30,19 @@ export const NTFY_TOPIC = "chlo-letters-b7k2m9x4";
 export const NOTIFY_ON_SITE_OPEN = true;
 export const NOTIFY_ON_HURTING_MOOD = true;
 
+// History-only entry — posts to the same ntfy history log as notifyNoah,
+// but does NOT trigger a real phone push. Used to quietly log which letter
+// Chlo was shown each time, so the "Letters" summary in the hidden panel
+// can tell Noah which ones are getting reused a lot (candidates to add
+// more variety for) and which moods still have no letter written at all.
+// If this fails, it's silent and never affects the site for Chlo.
+export async function logActivity(message: string) {
+  await fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+    method: "POST",
+    body: message,
+  }).catch(() => {});
+}
+
 export async function notifyNoah(
   message: string,
   opts?: { title?: string; urgent?: boolean }
@@ -68,7 +81,7 @@ export type NotificationLogEntry = {
 // stored by this browser, it's asking ntfy's server what it's seen
 // recently on this topic. Only used for the in-website history view,
 // unrelated to whether real phone push notifications are working.
-export async function fetchRecentNotifications(): Promise<
+export async function fetchRecentNotifications(): Promise
   NotificationLogEntry[]
 > {
   const res = await fetch(`https://ntfy.sh/${NTFY_TOPIC}/json?poll=1&since=all`);

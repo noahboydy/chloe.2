@@ -5,6 +5,7 @@ import { moods, letters, type Letter } from "./data/letters";
 import { getRandomVerse } from "./data/verses";
 import {
   notifyNoah,
+  logActivity,
   NOTIFY_ON_SITE_OPEN,
   NOTIFY_ON_HURTING_MOOD,
 } from "./lib/notify";
@@ -21,6 +22,17 @@ function pickRandom(pool: Letter[], excludeId?: string | null): Letter | null {
   const source = filtered.length > 0 ? filtered : pool;
   if (source.length === 0) return null;
   return source[Math.floor(Math.random() * source.length)];
+}
+
+// Quietly logs which letter (or "no letter yet") Chlo was just shown, so
+// the "Letters" summary in the hidden panel can flag ones being reused a
+// lot. History-only — never triggers a real phone push.
+function logLetterView(moodLabel: string, letter: Letter | null) {
+  logActivity(
+    letter
+      ? `Read: ${letter.id} (${moodLabel})`
+      : `No letter yet: ${moodLabel}`
+  );
 }
 
 export default function Home() {
@@ -73,12 +85,15 @@ export default function Home() {
         { title: "Chlo needs you 💙", urgent: true }
       );
     }
+
+    logLetterView(moodInfo?.label ?? moodKey, pick);
   }
 
   function handleAnother() {
     const pick = pickRandom(moodLetters, currentLetterId);
     setCurrentLetterId(pick?.id ?? null);
     setVerse((v) => getRandomVerse(v.text));
+    logLetterView(moodLabel, pick);
   }
 
   function handleBack() {

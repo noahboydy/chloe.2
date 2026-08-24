@@ -140,6 +140,17 @@ export function LetterBuilder() {
     if (passInput === PASSPHRASE) {
       setUnlocked(true);
       setPassError(false);
+      // Marks this browser tab as "Noah testing" for the rest of the
+      // visit, so page.tsx skips the notify-and-delete-from-GitHub
+      // behaviour when he's the one clicking through moods, not Chlo.
+      // See the note above isNoahTestingSession() in app/page.tsx.
+      try {
+        sessionStorage.setItem("noah-testing-session", "1");
+      } catch {
+        // sessionStorage unavailable — worst case this device's testing
+        // still triggers a real notify+delete, which is the safe-for-Chlo
+        // default anyway.
+      }
     } else {
       setPassError(true);
     }

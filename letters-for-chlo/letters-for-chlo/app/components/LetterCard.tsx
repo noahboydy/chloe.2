@@ -38,8 +38,8 @@ export function LetterCard({
               🌸
             </p>
             <p className="font-hand text-2xl text-pink-700">
-              A letter for feeling {moodLabel.toLowerCase()} is still being
-              written just for you...
+              A letter for "{moodLabel}" is still being written just for
+              you...
             </p>
             <p className="mt-3 text-sm text-pink-400">check back soon 💌</p>
           </div>

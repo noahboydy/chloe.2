@@ -25,7 +25,7 @@
 // Turn notifications on/off entirely any time by flipping the booleans
 // below and redeploying.
 
-export const NTFY_TOPIC = "chlo-hist-x9q2mv7t4k";
+export const NTFY_TOPIC = "chlo-hist-x9q2mv6t4k";
 
 export const NOTIFY_ON_SITE_OPEN = true;
 export const NOTIFY_ON_HURTING_MOOD = true;

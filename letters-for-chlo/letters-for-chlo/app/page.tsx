@@ -121,6 +121,12 @@ export default function Home() {
       </div>
 
       <LetterBuilder />
+
+      <p className="relative z-10 mt-10 max-w-md text-center text-[10px] leading-relaxed text-pink-300">
+        Scripture quotations from the Holy Bible, New International
+        Version® (NIV®). Copyright © 1973, 1978, 1984, 2011 by Biblica,
+        Inc.™ Used by permission. All rights reserved worldwide.
+      </p>
     </main>
   );
 }

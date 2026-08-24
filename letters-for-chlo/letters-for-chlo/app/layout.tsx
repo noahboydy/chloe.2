@@ -11,6 +11,17 @@ const caveat = Caveat({
 export const metadata: Metadata = {
   title: "For Chlo Chlo",
   description: "A little site to cheer you up, whenever you need it.",
+  manifest: "/manifest.json",
+  themeColor: "#f4568c",
+  appleWebApp: {
+    capable: true,
+    title: "Chlo Chlo",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/icon-192.png",
+  },
 };
 
 export default function RootLayout({

@@ -1,12 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { moods, letters, type Letter } from "./data/letters";
 import { getRandomVerse } from "./data/verses";
+import {
+  notifyNoah,
+  NOTIFY_ON_SITE_OPEN,
+  NOTIFY_ON_HURTING_MOOD,
+} from "./lib/notify";
 import { MoodGrid } from "./components/MoodGrid";
 import { LetterCard } from "./components/LetterCard";
 import { FlowerCorner } from "./components/Flowers";
 import { VerseCard } from "./components/VerseCard";
+import { LetterBuilder } from "./components/LetterBuilder";
 
 function pickRandom(pool: Letter[], excludeId?: string | null): Letter | null {
   const filtered = excludeId
@@ -34,12 +40,39 @@ export default function Home() {
   const moodLabel = selectedMoodInfo?.label ?? "";
   const isSupportMood = selectedMoodInfo?.isSupport ?? false;
 
+  // Pings Noah once per visit when Chlo opens the site — not tied to any
+  // specific mood, just lets him know she's using it.
+  useEffect(() => {
+    if (!NOTIFY_ON_SITE_OPEN) return;
+    try {
+      if (sessionStorage.getItem("chlo-open-notified")) return;
+      sessionStorage.setItem("chlo-open-notified", "1");
+    } catch {
+      // sessionStorage can be unavailable (private browsing etc) — fall
+      // through and notify anyway rather than silently skip it
+    }
+    notifyNoah("Chlo opened the letters site.", { title: "Chlo Chlo 🌸" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function handleSelectMood(moodKey: string) {
     setSelectedMood(moodKey);
     const pool = letters.filter((l) => l.moodKey === moodKey);
     const pick = pickRandom(pool);
     setCurrentLetterId(pick?.id ?? null);
     setVerse((v) => getRandomVerse(v.text));
+
+    // Only the "hurting" mood gets its own always-on alert — see the note
+    // in lib/notify.ts and the README for why every other mood does NOT
+    // silently notify Noah. Want per-mood notifications anyway? Add:
+    //   notifyNoah(`Chlo picked "${moods.find(m => m.key === moodKey)?.label}"`, { title: "Chlo Chlo 🌸" });
+    const moodInfo = moods.find((m) => m.key === moodKey);
+    if (NOTIFY_ON_HURTING_MOOD && moodInfo?.isSupport) {
+      notifyNoah(
+        "Chlo just opened the 'thinking about hurting myself' page.",
+        { title: "Chlo needs you 💙", urgent: true }
+      );
+    }
   }
 
   function handleAnother() {
@@ -86,6 +119,8 @@ export default function Home() {
 
         <VerseCard verse={verse} />
       </div>
+
+      <LetterBuilder />
     </main>
   );
 }

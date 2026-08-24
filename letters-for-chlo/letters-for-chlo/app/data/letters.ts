@@ -61,10 +61,9 @@ export const moods: Mood[] = [
 // ─────────────────────────────────────────────────────────────────────────
 
 export const letters: Letter[] = [
-  // 👇 add your letters here, one object per letter, separated by commas
-];
   {
     id: "sad-1787592126927",
     moodKey: "sad",
     text: `hey so this is the first letter im doing so not entirely sure what im doing but I heard from a bird that your feeling sad. that means you are not a happy bunny. Whatever it is your upset about, God is willing to listen, and I would be listening but I need my beauty sleep. Know that I am always here for you and I always wanna help u asm as I can. I think you should be reading this after im in bed, but if your not then TEXT ME I shall respond I think. If it is late at night, I think you should get some sleep, and if I was there I would definitely be giving you a hug because I like hugs and sad people always need a hug – even more than happy people. Personally, if I was in your situation I would go and get terry or whatever the massive teddys name is and hug the hell out of him because it would help both of you and terry is my man. I hope you feel better really soon and if this didn’t work then blame boris johnson or someone – channel the annoyance awayyy from me. Also a slight thing – every single one of these is programmed to end with love noah so uhh, I would change it but I actually don’t know how which is great but I love you as a friend asm as I can w out being weird. Hope your feeling a bit or a lot better and I will text you as soon as I can because you deserve better than feeling sad.`,
   },
+];

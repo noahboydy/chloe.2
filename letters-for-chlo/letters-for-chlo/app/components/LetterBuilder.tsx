@@ -140,16 +140,19 @@ export function LetterBuilder() {
     if (passInput === PASSPHRASE) {
       setUnlocked(true);
       setPassError(false);
-      // Marks this browser tab as "Noah testing" for the rest of the
-      // visit, so page.tsx skips the notify-and-delete-from-GitHub
-      // behaviour when he's the one clicking through moods, not Chlo.
-      // See the note above isNoahTestingSession() in app/page.tsx.
+      // Marks THIS DEVICE (not just this tab/visit) as "Noah's device",
+      // so page.tsx skips the notify, delete-from-GitHub, and activity
+      // logging behaviour whenever he's the one clicking through moods,
+      // not Chlo. Stored in localStorage so it survives closing the tab
+      // or the browser — unlock once per device and testing stays out of
+      // Chlo's activity log from then on. See isNoahDevice() in
+      // app/page.tsx.
       try {
-        sessionStorage.setItem("noah-testing-session", "1");
+        localStorage.setItem("noah-device", "1");
       } catch {
-        // sessionStorage unavailable — worst case this device's testing
-        // still triggers a real notify+delete, which is the safe-for-Chlo
-        // default anyway.
+        // localStorage unavailable — worst case this device's testing
+        // still triggers a real notify+delete+log, which is the
+        // safe-for-Chlo default anyway.
       }
     } else {
       setPassError(true);

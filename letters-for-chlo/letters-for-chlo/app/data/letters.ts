@@ -78,4 +78,16 @@ export const letters: Letter[] = [
 
 https://www.tiktok.com/@kingkongswagg/video/7530671904995183903?is_from_webapp=1&sender_device=pc&web_id=7674969566283531798`,
   },
+  {
+    id: "sad-1787653994049",
+    moodKey: "sad",
+    text: `So the last sad letter didn’t do as well as I intended so I have researched the best ways to cheer up a teenage girl and it didn’t come up with very many useful things but there was a few and so I shall combine them with my usual charm and love to make you a lovely mix of happiness inducing sentences.
+
+Firstly, I would like to formally remind you that you are genuinely such an amazing person. I know that when you're feeling rubbish, your brain probably isn't going to believe me when I say that, but unfortunately for your brain, I am correct.
+You never have to pretend to be okay because someone asks. Apparently, not having to talk about anything is actually helpful according to the people who know what they're talking about, so there you go - I have accidentally become qualified.
+Also, just in case you have forgotten, you are wanted. Your existence makes a difference to people. You make people and me - not that I am not a person but you get the idea - laugh, you make people feel comfortable, you have your own little ways of making things better without even realising you're doing it.
+I also want you to know that I’m not only here when you're happy. I'm here when you're annoying, tired, quiet, overthinking, confused, sad, or just randomly staring at the wall questioning every decision you've ever made. You don't become less worth caring about just because you're having a bad day.
+And I know I can't magically make whatever is upsetting you disappear. I wish I could, but apparently my cool person powers have limits. What I can do is remind you that you don't have to deal with everything completely alone. I'll listen, I'll distract you, I'll send you stupid things, I'll sit in silence if that's what you need – though it may be boring, and I'll keep checking in even if your first response is just “I'm fine” when we both know that's absolutely not true.
+Side effects may include smiling slightly, feeling loved, receiving an unreasonable amount of nonsense from me, and possibly remembering that you have an annoying person who cares about you a lot.`,
+  },
 ];

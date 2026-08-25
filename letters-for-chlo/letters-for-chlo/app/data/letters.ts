@@ -71,4 +71,11 @@ export const letters: Letter[] = [
     moodKey: "hurting",
     text: `Hey buddy, if you’re feeling this way at the moment then I’m so sorry cause you don’t deserve to. I am so proud of you for getting this far, and if you’ve come to this before you fall into self-harm then you are so strong but if you haven’t then I so understand. However dark it might seem, I’m still here, there’s always a light at the end of tunnel, in fact I can guarantee that there is something you are looking forward to tomorrow and if there’s not then you can look forward to me talking to you, I hope and if you can’t then I’ve definitely done something wrong. If I were you, I’d put on some lovely foo fighters and lie down with your favourite teddy. Imagine your favourite memory, and all the people in it around you, there to comfort you because you really are that loved. You are so so loved by so many people, and you deserve that because you’re just as loving to other people.`,
   },
+  {
+    id: "smile-1787653609428",
+    moodKey: "smile",
+    text: `It seems that you need to smile. You’re feeling sad but not sad enough to press the sad button so here I am. Woohoo!  Pick a person that you know. Could literally be anyone you have ever met, preferably not Grace or Izabella cause there just opps and a bit weird if you ask me. But whoever you have picked, think of something you’ve done with them, I could think of Ethan and the many poo jokes he’s made, or some old mate. I can’t remember your cheer coach’s name but whatever the cool one’s called, imagine him there in front of you talking to you because he wouldn’t want to see you like this, there are lots of people that if they saw you right now, would be jumping to cheer you up, me included. I hope this helped, and if it didn’t, here’s a cool video I found of cheerleading fails because you know, you’re a cheerleader and if these fails like internally hurt you then oops but it’s the thought that counts. 
+
+https://www.tiktok.com/@kingkongswagg/video/7530671904995183903?is_from_webapp=1&sender_device=pc&web_id=7674969566283531798`,
+  },
 ];
